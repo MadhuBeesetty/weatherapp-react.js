@@ -14,7 +14,8 @@ class App extends React.Component {
     windspeed: undefined,
     weatherType: undefined,
     dayMax : undefined,
-    dayMin : undefined
+    dayMin : undefined,
+    error : undefined
   }
   weather = async (e) => {
     e.preventDefault();
@@ -22,17 +23,23 @@ class App extends React.Component {
     const country = e.target.elements.country.value;
     const connect_api = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${API_KEY}&units=metric`);
     const data = await connect_api.json();
-    console.log(data);
-    this.setState({
-      city: data.name,
-      country: data.sys.country,
-      temperature: data.main.temp,
-      humidity: data.main.humidity,
-      windspeed: data.wind.speed,
-      weatherType: data.weather[0].main,
-      dayMax: data.main.temp_max,
-      dayMin: data.main.temp_min
-    })
+    if(city && country){
+      console.log(data);
+      this.setState({
+        city: data.name,
+        country: data.sys.country,
+        temperature: data.main.temp,
+        humidity: data.main.humidity,
+        windspeed: data.wind.speed,
+        weatherType: data.weather[0].main,
+        dayMax: data.main.temp_max,
+        dayMin: data.main.temp_min
+      })
+    }else{
+      this.setState({
+    error : "city or country not found"
+      });
+      }
   }
   render() {
     return (
@@ -47,6 +54,7 @@ class App extends React.Component {
           humidity={this.state.humidity}
           windspeed={this.state.windspeed}
           weatherType={this.state.weatherType}
+          error={this.state.error}
         />
       </div>
     );
